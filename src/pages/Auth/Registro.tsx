@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { Link } from 'react-router-dom'
 
+const BASE = (import.meta.env.VITE_API_URL ?? '') + '/api'
+
 export function Registro() {
   const [form, setForm] = useState({ nome: '', empresa: '', email: '', senha: '' })
   const [sucesso, setSucesso] = useState(false)
@@ -17,7 +19,7 @@ export function Registro() {
     setErro('')
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/registro', {
+      const res = await fetch(`${BASE}/auth/registro`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
