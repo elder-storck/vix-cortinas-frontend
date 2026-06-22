@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { Usuario } from '../types/usuario'
 
+const BASE = (import.meta.env.VITE_API_URL ?? '') + '/api'
+
 interface AuthContextValue {
   usuario: Usuario | null
   loading: boolean
@@ -17,7 +19,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (!token) { setLoading(false); return }
-    fetch('/api/auth/me', { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`${BASE}/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.ok ? r.json() : Promise.reject())
       .then((u: Usuario) => setUsuario(u))
       .catch(() => localStorage.removeItem('token'))
@@ -25,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function login(email: string, senha: string) {
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch(`${BASE}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha }),
@@ -39,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   function logout() {
     const token = localStorage.getItem('token')
     if (token) {
-      fetch('/api/auth/logout', { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
+      fetch(`${BASE}/auth/logout`, { method: 'POST', headers: { Authorization: `Bearer ${token}` } })
     }
     localStorage.removeItem('token')
     setUsuario(null)
